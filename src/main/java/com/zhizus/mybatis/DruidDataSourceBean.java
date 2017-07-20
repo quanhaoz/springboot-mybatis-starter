@@ -24,13 +24,11 @@ import java.sql.SQLException;
 public class DruidDataSourceBean implements EnvironmentAware {
 
     private RelaxedPropertyResolver propertyResolver ;
-
     private DruidDataSource dataSource = new DruidDataSource();
 
     @Override
     public void setEnvironment(Environment environment) {
         this.propertyResolver = new RelaxedPropertyResolver(environment, "datasource.druid.");
-
     }
 
     @Bean

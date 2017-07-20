@@ -13,7 +13,6 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
     protected Object determineCurrentLookupKey() {
         //get key
         //这里动态的获取可用的key
-
         return null;
     }
 }

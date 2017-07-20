@@ -19,7 +19,6 @@ import java.util.Set;
 public class ExtraConf {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtraConf.class) ;
 
-
     public static  Map< ConfType , Map<String , Conf>> configs = new HashMap<ConfType, Map<String,Conf>>() ;
 
     static{

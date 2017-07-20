@@ -27,7 +27,6 @@ import java.util.Set;
 public class DataSourceAutoConfiguration implements BeanDefinitionRegistryPostProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(DataSourceAutoConfiguration.class);
 
-
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
     }
