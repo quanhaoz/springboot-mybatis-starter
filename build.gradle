@@ -12,59 +12,34 @@ archivesBaseName = archivesProjectName
 [compileJava, compileTestJava]*.options*.encoding = "UTF-8"
 sourceSets.main.java.srcDirs += ["src/gen/java", "src/test/java"]
 
-repositories {
-    maven { url "http://nexus.fanxing.kgidc.cn/nexus/content/groups/public/" }
+allprojects {
+    repositories {
+        maven{ url 'http://maven.oschina.net/content/groups/public/'}
+    }
 }
-
-
 configurations.all {
     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-
-    all*.exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
-    all*.exclude group: 'com.google.collections', module: 'google-collections'
-    all*.exclude group: 'log4j', module: 'log4j'
-    all*.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
 }
 
 configurations {
 }
 
 
-repositories {
-    maven { url "http://nexus.fanxing.kgidc.cn/nexus/content/groups/public/" }
-}
-dependencies {
-    mybatisGenerator 'org.mybatis.generator:mybatis-generator-core:1.3.2'
-    mybatisGenerator 'mysql:mysql-connector-java:5.1.36'
-    mybatisGenerator 'tk.mybatis:mapper:3.3.2'
-}
-
-
-
 
 dependencies {
-    compile "com.kugou.springboot:kugou-starter:$starVersion"
-    compile "com.kugou.springboot:kugou-ibatis:$starVersion"
-    compile "com.kugou.springboot:kugou-scheduled:$starVersion"
-    compile "com.kugou.springboot:kugou-cache:$starVersion"
-    compile "com.kugou.springboot:kugou-mq:$starVersion"
-    compile "com.kugou.springboot:kugou-logback-kafka:$starVersion"
-    compile "com.kugou:kugou-memcached:${kugoulibVersion}"
-    compile "junit:junit:4.12"
-    compile "com.kugou.springboot:kugou-test:0.2.0.2-SNAPSHOT"
+
     compile "com.netflix.hystrix:hystrix-core:1.5.11"
     compile 'tk.mybatis:mapper:3.4.0'
-//    compile "tk.mybatis:mapper-spring-boot-starter:1.1.0"
-//    compile 'com.ctrip.framework.apollo:apollo-client:0.7.0'
+    compile "tk.mybatis:mapper-spring-boot-starter:1.1.0"
+    compile "org.springframework.boot:spring-boot-starter-jdbc:1.3.2.RELEASE"
+    compile "com.alibaba:druid:1.0.16"
+    compile "org.mybatis:mybatis-spring:1.2.3"
+
+
+
 }
 
-processResources << {
-    try {
-        file("$destinationDir/version.properties").text = 'version=' + "git rev-parse --short HEAD".execute().text.trim()
-    } catch (Exception e) {
-        println("get version from git fail")
-    }
-}
+
 
 eclipse {
     classpath {
@@ -73,7 +48,6 @@ eclipse {
     }
 }
 //
-
 
 task copyLib(type: Sync, dependsOn: jar) {
     from configurations.compile

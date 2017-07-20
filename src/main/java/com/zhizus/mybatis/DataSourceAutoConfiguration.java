@@ -27,7 +27,7 @@ import java.util.Set;
  * Created by dempezheng on 2017/7/20.
  */
 @Configuration
-@AutoConfigureAfter({MybatisAutoConfiguration.class, com.kugou.mybatis.autoconfigure.MyBatisMapperScannerConfig.class, DruidDataSourceBean.class})
+@AutoConfigureAfter({MybatisAutoConfiguration.class, MyBatisMapperScannerConfig.class, DruidDataSourceBean.class})
 public class DataSourceAutoConfiguration implements BeanDefinitionRegistryPostProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(DataSourceAutoConfiguration.class);
 
