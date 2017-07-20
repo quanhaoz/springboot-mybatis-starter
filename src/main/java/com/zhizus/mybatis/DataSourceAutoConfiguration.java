@@ -1,13 +1,9 @@
 package com.zhizus.mybatis;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.kugou.config.ExtraConf;
-import com.kugou.mybatis.MyBatisRepository;
-import com.kugou.mybatis.autoconfigure.DataSourceBuilder;
-import com.kugou.mybatis.autoconfigure.DruidDataSourceBean;
-import com.kugou.mybatis.autoconfigure.MybatisAutoConfiguration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
+import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
