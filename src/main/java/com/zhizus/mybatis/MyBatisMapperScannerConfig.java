@@ -21,7 +21,7 @@ import org.springframework.core.env.Environment;
 @ConditionalOnProperty(name={"url"} , prefix ="datasource.druid")
 public class MyBatisMapperScannerConfig implements EnvironmentAware {
 
-    private String basePackage = "com.kugou";
+    private String basePackage = "com.zhizus";
 
     private RelaxedPropertyResolver propertyResolver ;
 
