@@ -1,6 +1,9 @@
 package com.zhizus.mybatis;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.google.common.collect.Maps;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
@@ -17,6 +20,9 @@ import org.springframework.context.annotation.Configuration;
 import tk.mybatis.spring.mapper.MapperScannerConfigurer;
 
 import javax.sql.DataSource;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -35,9 +41,11 @@ public class DataSourceAutoConfiguration implements BeanDefinitionRegistryPostPr
     public void postProcessBeanDefinitionRegistry(
             BeanDefinitionRegistry registry) throws BeansException {
 
+
         if (initDefaultDataSource(registry)) {
             LOGGER.info("has init default datasource");
         }
+
         if (!ExtraConf.hasExtraConf(ExtraConf.ConfType.MYSQL)) {
             return;
         }
@@ -77,6 +85,38 @@ public class DataSourceAutoConfiguration implements BeanDefinitionRegistryPostPr
             }
         }
 
+    }
+
+    Map<String, DataSource> groupDataSourceMap = Maps.newConcurrentMap();
+
+    private void loadMapperScanner(  BeanDefinitionRegistry registry) throws SQLException {
+        Config load = ConfigFactory.load("application.conf");
+        Config group = load.getConfig("mybatis").getConfig("group");
+        String basePackage = group.getString("package");
+        List<? extends Config> configList = group.getConfigList("source-group");
+        //当datasource-group只有一个的时候，不需要自动切换
+        if (configList.size() == 1) {
+            Config config = configList.get(0);
+            DataSource dataSource = DataSourceBuilder.createDataSource(config);
+
+
+        }
+        for (Config config : configList) {
+            String groupKey = config.getString("group");
+            DataSource dataSource = DataSourceBuilder.createDataSource(config);
+            groupDataSourceMap.put(groupKey, dataSource);
+
+        }
+    }
+
+    private void registerSqlSessionFactory( BeanDefinitionRegistry registry,DataSource dataSource,String mappers,String groupKey) throws Exception {
+        BeanDefinitionBuilder sessionFactoryDefinition = BeanDefinitionBuilder.genericBeanDefinition(DefaultSqlSessionFactory.class);
+        SqlSessionFactory sessionFactory = DataSourceBuilder.createSqlSessionFactory(dataSource,mappers );
+        sessionFactoryDefinition.addConstructorArgValue(sessionFactory.getConfiguration());
+
+        String sessionFactoryName = "sessionFactory@" + groupKey;
+        //定义sessionFactory
+        registry.registerBeanDefinition(sessionFactoryName, sessionFactoryDefinition.getBeanDefinition());
     }
 
     public boolean initDefaultDataSource(BeanDefinitionRegistry registry) {

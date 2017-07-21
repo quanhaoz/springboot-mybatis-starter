@@ -1,6 +1,7 @@
 package com.zhizus.mybatis;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.typesafe.config.Config;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -32,6 +33,23 @@ public class DataSourceBuilder {
         source.setDriverClassName("com.mysql.jdbc.Driver");
         return source ;
     }
+
+    public static DataSource createDataSource(Config conf) throws SQLException {
+        DruidDataSource source = new DruidDataSource();
+        source.setUrl(conf.getString("url"));
+        source.setUsername(conf.getString("username"));
+        source.setPassword(conf.getString("password"));
+        source.setInitialSize( 1);
+        source.setMinIdle(1);
+        source.setMaxActive(32);
+        source.setMaxWait(  60000L);
+        source.setValidationQuery("SELECT 'x'");
+        source.setFilters("wall,stat");
+        source.setConnectionProperties("druid.stat.logSlowSql=true");
+        source.setDriverClassName("com.mysql.jdbc.Driver");
+        return source ;
+    }
+
 
 
     public static DataSource createDataSource( RelaxedPropertyResolver propertyResolver ) throws SQLException {
