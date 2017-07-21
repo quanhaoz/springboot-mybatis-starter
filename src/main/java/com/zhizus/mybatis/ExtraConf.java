@@ -92,12 +92,42 @@ public class ExtraConf {
 
     }
 
+    public static enum ConfType {
+        MYSQL {
+            @Override
+            public boolean is(String flag) {
+                return flag != null && flag.contains("[mysql]");
+            }
+        },
+        NSQ {
+            @Override
+            public boolean is(String flag) {
+                return flag != null && flag.contains("[nsq]");
+            }
+        },
+        REDIS {
+            @Override
+            public boolean is(String flag) {
+                return flag != null && flag.contains("[redis]");
+            }
+        };
+
+        public static ConfType getByFlag(String flag) {
+            for (ConfType type : ConfType.values()) {
+                if (type.is(flag)) {
+                    return type;
+                }
+            }
+            return null;
+        }
+
+        public abstract boolean is(String flag);
+    }
+
     public static class Conf {
-        private String name;
-
         protected ConfigurableConversionService conversionService = new DefaultConversionService();
-
         Map<String, String> properties;
+        private String name;
 
         public String getName() {
             return name;
@@ -130,39 +160,6 @@ public class ExtraConf {
                 properties = new HashMap<String, String>();
             }
             properties.put(key, value);
-        }
-    }
-
-    public static enum ConfType {
-        MYSQL {
-            @Override
-            public boolean is(String flag) {
-                return flag != null && flag.contains("[mysql]");
-            }
-        },
-        NSQ {
-            @Override
-            public boolean is(String flag) {
-                return flag != null && flag.contains("[nsq]");
-            }
-        },
-        REDIS {
-            @Override
-            public boolean is(String flag) {
-                return flag != null && flag.contains("[redis]");
-            }
-        };
-
-        public abstract boolean is(String flag);
-
-
-        public static ConfType getByFlag(String flag) {
-            for (ConfType type : ConfType.values()) {
-                if (type.is(flag)) {
-                    return type;
-                }
-            }
-            return null;
         }
     }
 

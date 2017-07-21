@@ -7,12 +7,12 @@ public class GroupParamHolderId {
 
     public final static ThreadLocal<String> groupIdThreadLocal = new ThreadLocal<>();
 
-    public static void setGroupId(String id) {
-        groupIdThreadLocal.set(id);
-    }
-
     public static String getGroupId() {
         return groupIdThreadLocal.get();
+    }
+
+    public static void setGroupId(String id) {
+        groupIdThreadLocal.set(id);
     }
 
     public static String getAndRemoveGroupId() {

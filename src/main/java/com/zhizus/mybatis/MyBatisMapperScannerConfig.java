@@ -1,7 +1,6 @@
 package com.zhizus.mybatis;
 
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -17,13 +16,12 @@ import org.springframework.core.env.Environment;
  */
 @Configuration
 @AutoConfigureAfter(MybatisAutoConfiguration.class)
-//兼容旧实现
-@ConditionalOnProperty(name={"url"} , prefix ="datasource.druid")
+@ConditionalOnProperty(name = {"url"}, prefix = "datasource.druid")
 public class MyBatisMapperScannerConfig implements EnvironmentAware {
 
     private String basePackage = "com.zhizus";
 
-    private RelaxedPropertyResolver propertyResolver ;
+    private RelaxedPropertyResolver propertyResolver;
 
     @Bean
     public MapperScannerConfigurer mapperScannerConfigurer(@Qualifier("sqlSessionFactory") SqlSessionFactory sessionFactory) {
@@ -37,10 +35,10 @@ public class MyBatisMapperScannerConfig implements EnvironmentAware {
 
     @Override
     public void setEnvironment(Environment environment) {
-        propertyResolver = new RelaxedPropertyResolver(environment, "mybatis.") ;
+        propertyResolver = new RelaxedPropertyResolver(environment, "mybatis.");
 
-        if(propertyResolver.getProperty("basePackage") != null){
-            basePackage = propertyResolver.getProperty("basePackage") ;
+        if (propertyResolver.getProperty("basePackage") != null) {
+            basePackage = propertyResolver.getProperty("basePackage");
         }
     }
 }

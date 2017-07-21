@@ -1,20 +1,24 @@
 package com.zhizus.mybatis.mapper;
 
 import com.zhizus.mybatis.GeneratedGroupId;
-import com.zhizus.mybatis.GroupParamId;
-import org.apache.ibatis.annotations.Insert;
+import com.zhizus.mybatis.MyBatisRepository;
+import com.zhizus.mybatis.model.User;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 /**
  * Created by dempezheng on 2017/7/20.
  */
-public interface SampleMapper<T> {
+@MyBatisRepository
+public interface SampleMapper {
 
-    @Insert("")
+
     @GeneratedGroupId
-    int insert(T t);
+    int insert(User t);
 
-    @Select("")
-    T selectById(@GroupParamId String id);
+    @Select("select * from user where id=#{id}")
+    User selectById(@Param("id") Integer id);
+
+
 
 }

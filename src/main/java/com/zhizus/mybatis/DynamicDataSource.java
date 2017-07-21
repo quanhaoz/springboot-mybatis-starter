@@ -1,9 +1,9 @@
 package com.zhizus.mybatis;
 
+import com.zhizus.mybatis.loadbalance.RandomLoadBalance;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
-import javax.sql.DataSource;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
 
 /**
  * 1.监控mapper的执行状况，如果异常超过阈值，自动切换
@@ -12,10 +12,15 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DynamicDataSource extends AbstractRoutingDataSource {
 
-    private ConcurrentHashMap<String, DataSource> groupDataSourceMap;
+    private volatile List<GroupInfo> list;
 
-    public DynamicDataSource(ConcurrentHashMap<String, DataSource> groupDataSourceMap) {
-        this.groupDataSourceMap = groupDataSourceMap;
+    private LoadBalance<GroupInfo> loadBalance;
+    private IsolationStrategy<GroupInfo> isolationStrategy;
+
+    public DynamicDataSource(List<GroupInfo> list) {
+        this.list = list;
+        isolationStrategy = new IsolationStrategy<>();
+        loadBalance = new RandomLoadBalance(isolationStrategy);
     }
 
 
@@ -23,6 +28,9 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
     protected Object determineCurrentLookupKey() {
         //get key
         //这里动态的获取可用的key
-        return null;
+        GroupInfo select = list.get(0);
+        System.out.println(select);
+        return select.getGroupKey();
     }
+
 }

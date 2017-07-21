@@ -1,12 +1,11 @@
 package com.zhizus.mybatis;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.google.common.collect.Maps;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
-import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
+import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -17,10 +16,11 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Configuration;
-import tk.mybatis.spring.mapper.MapperScannerConfigurer;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -31,7 +31,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DataSourceAutoConfiguration implements BeanDefinitionRegistryPostProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(DataSourceAutoConfiguration.class);
 
-    ConcurrentHashMap<String, DataSource> groupDataSourceMap = Maps.newConcurrentMap();
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
@@ -73,6 +72,8 @@ public class DataSourceAutoConfiguration implements BeanDefinitionRegistryPostPr
 
 
     private void loadMapperScanner(BeanDefinitionRegistry registry) throws Exception {
+        Map<Object, Object> groupDataSourceMap = new ConcurrentHashMap<>();
+        List<GroupInfo> groupInfos = new ArrayList<>();
         Config load = ConfigFactory.load("application.conf");
         Config group = load.getConfig("mybatis").getConfig("group");
         String basePackage = group.getString("package");
@@ -88,10 +89,17 @@ public class DataSourceAutoConfiguration implements BeanDefinitionRegistryPostPr
         } else {
             for (Config config : configList) {
                 String groupKey = config.getString("group");
-                DataSource dataSource = DataSourceBuilder.createDataSource(config);
-                groupDataSourceMap.put(groupKey, dataSource);
+                Config dataSourceConfig = config.getConfig("datasource");
+                DataSource dataSource = DataSourceBuilder.createDataSource(dataSourceConfig);
+                GroupInfo groupInfo = new GroupInfo().setGroupKey(groupKey).setDatabaseName(name).setUrl(dataSourceConfig.getString("url"));
+
+                groupDataSourceMap.put(groupInfo.getGroupKey(), dataSource);
+                groupInfos.add(groupInfo);
             }
-            DataSource dynamicDataSource = new DynamicDataSource(groupDataSourceMap);
+
+            DynamicDataSource dynamicDataSource = new DynamicDataSource(groupInfos);
+            dynamicDataSource.setTargetDataSources(groupDataSourceMap);
+            dynamicDataSource.afterPropertiesSet();
             registerScanner(registry, name, mappers, basePackage, dynamicDataSource);
         }
 
