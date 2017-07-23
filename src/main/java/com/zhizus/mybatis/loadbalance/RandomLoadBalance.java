@@ -12,8 +12,8 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class RandomLoadBalance extends AbstractLoadBalance {
 
-    public RandomLoadBalance(IsolationStrategy<GroupInfo> isolationStrategy) {
-        super(isolationStrategy);
+    public RandomLoadBalance(IsolationStrategy<GroupInfo> isolationStrategy, List<GroupInfo> groupInfoList) {
+        super(isolationStrategy, groupInfoList);
     }
 
     @Override

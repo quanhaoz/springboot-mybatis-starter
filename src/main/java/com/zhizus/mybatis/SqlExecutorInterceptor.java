@@ -1,6 +1,7 @@
 package com.zhizus.mybatis;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.google.common.base.Strings;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
@@ -30,11 +31,19 @@ import java.util.Properties;
                 args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class})
 })
 public class SqlExecutorInterceptor implements Interceptor {
+
+    private IsolationStrategy isolationStrategy;
+
+    public SqlExecutorInterceptor(IsolationStrategy isolationStrategy) {
+        this.isolationStrategy = isolationStrategy;
+    }
+
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         Object[] args = invocation.getArgs();
         if (args != null && args.length > 0) {
             MappedStatement statement = (MappedStatement) args[0];
+
             if (statement != null) {
                 SqlCommandType sqlCommandType = statement.getSqlCommandType();
 
@@ -45,11 +54,16 @@ public class SqlExecutorInterceptor implements Interceptor {
                 }
             }
         }
+        String groupKey = "";
         try {
             Object obj = invocation.proceed();
+            groupKey = GroupParamHolderId.getAndRemoveGroupId();
 
             return obj;
         } catch (Exception e) {
+            if(!Strings.isNullOrEmpty(groupKey)){
+                isolationStrategy.fail(groupKey);
+            }
             throw e;
         } finally {
         }

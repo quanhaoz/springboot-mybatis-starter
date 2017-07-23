@@ -1,4 +1,6 @@
-package com.zhizus.mybatis;
+package com.zhizus.mybatis.loadbalance;
+
+import com.zhizus.mybatis.GroupInfo;
 
 import java.util.List;
 

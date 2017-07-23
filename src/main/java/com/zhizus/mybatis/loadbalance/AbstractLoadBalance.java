@@ -3,7 +3,6 @@ package com.zhizus.mybatis.loadbalance;
 import com.google.common.collect.Lists;
 import com.zhizus.mybatis.GroupInfo;
 import com.zhizus.mybatis.IsolationStrategy;
-import com.zhizus.mybatis.LoadBalance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,33 +18,34 @@ public abstract class AbstractLoadBalance implements LoadBalance<GroupInfo> {
     private final static Logger LOGGER = LoggerFactory.getLogger(AbstractLoadBalance.class);
 
 
-    private List<GroupInfo> GroupInfoList = Lists.newArrayList();
+    private List<GroupInfo> groupInfoList;
 
     private IsolationStrategy<GroupInfo> isolationStrategy;
 
-    public AbstractLoadBalance(IsolationStrategy<GroupInfo> isolationStrategy) {
+    public AbstractLoadBalance(IsolationStrategy<GroupInfo> isolationStrategy, List<GroupInfo> groupInfoList) {
+        this.groupInfoList = groupInfoList;
         this.isolationStrategy = isolationStrategy;
     }
 
     public List<GroupInfo> getAvailableServerList() {
         List<GroupInfo> availableList = Lists.newArrayList();
         Set<GroupInfo> failed = isolationStrategy.getFailed();
-        for (GroupInfo GroupInfo : GroupInfoList) {
+        for (GroupInfo GroupInfo : groupInfoList) {
             if (!failed.contains(GroupInfo)) {
                 availableList.add(GroupInfo);
             }
         }
         if (availableList.isEmpty()) {
-            for (GroupInfo GroupInfo : GroupInfoList) {
+            for (GroupInfo GroupInfo : groupInfoList) {
                 availableList.add(GroupInfo);
             }
             LOGGER.warn("available server list is empty, use failed back list instead");
         }
-        return GroupInfoList;
+        return groupInfoList;
     }
 
     @Override
     public void setList(List<GroupInfo> list) {
-        GroupInfoList = list;
+        groupInfoList = list;
     }
 }

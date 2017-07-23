@@ -19,9 +19,10 @@ public class HashLoadBalance extends RandomLoadBalance {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(HashLoadBalance.class);
 
-    public HashLoadBalance(IsolationStrategy<GroupInfo> isolationStrategy) {
-        super(isolationStrategy);
+    public HashLoadBalance(IsolationStrategy<GroupInfo> isolationStrategy, List<GroupInfo> groupInfoList) {
+        super(isolationStrategy, groupInfoList);
     }
+
 
     private int getHash(String key) {
         return 0x7fffffff & key.hashCode();

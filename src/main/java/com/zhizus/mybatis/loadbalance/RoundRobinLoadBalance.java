@@ -14,8 +14,9 @@ public class RoundRobinLoadBalance extends AbstractLoadBalance {
 
     private AtomicInteger idx = new AtomicInteger(0);
 
-    public RoundRobinLoadBalance(IsolationStrategy<GroupInfo> isolationStrategy) {
-        super(isolationStrategy);
+
+    public RoundRobinLoadBalance(IsolationStrategy<GroupInfo> isolationStrategy, List<GroupInfo> groupInfoList) {
+        super(isolationStrategy, groupInfoList);
     }
 
     @Override

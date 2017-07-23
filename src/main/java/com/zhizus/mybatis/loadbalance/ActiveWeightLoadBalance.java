@@ -13,8 +13,8 @@ import java.util.List;
  */
 public class ActiveWeightLoadBalance extends AbstractLoadBalance {
 
-    public ActiveWeightLoadBalance(IsolationStrategy<GroupInfo> isolationStrategy) {
-        super(isolationStrategy);
+    public ActiveWeightLoadBalance(IsolationStrategy<GroupInfo> isolationStrategy, List<GroupInfo> groupInfoList) {
+        super(isolationStrategy, groupInfoList);
     }
 
     @Override
