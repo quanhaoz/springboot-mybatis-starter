@@ -37,5 +37,5 @@ todo
 
 暂时没有好的方法将id传递过去，正常传递，需要改动的api较大，所以考虑将id放到threadLocal中，
 
-
-
+参考文章：
+[微信支付：如何打造移动支付时代的高可用收银系统？](http://mp.weixin.qq.com/s?__biz=MjM5MDE0Mjc4MA==&mid=2650995797&idx=1&sn=cbbf307bb7abff8923af05947ff58f05&chksm=bdbf04068ac88d10a06157721ac466170182d340eb7d966c9f0b11b0f33c265b6829d40a4d29&mpshare=1&scene=1&srcid=0721y6FpiPLbTawKHkKmfWcS#rd)
